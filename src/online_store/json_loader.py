@@ -23,7 +23,7 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         KeyError: Если в JSON отсутствуют обязательные поля
     """
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             data = json.load(file)
 
         categories = []
@@ -36,29 +36,29 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         if isinstance(data, list):
             # Новая структура: список категорий
             categories_data = data
-        elif isinstance(data, dict) and 'categories' in data:
+        elif isinstance(data, dict) and "categories" in data:
             # Старая структура: объект с ключом 'categories'
-            categories_data = data['categories']
+            categories_data = data["categories"]
         else:
             raise ValueError("Неподдерживаемая структура JSON файла")
 
         for category_data in categories_data:
             # Создаем продукты для категории
             products = []
-            for product_data in category_data.get('products', []):
+            for product_data in category_data.get("products", []):
                 product = Product(
-                    name=product_data['name'],
-                    description=product_data['description'],
-                    price=product_data['price'],
-                    quantity=product_data['quantity']
+                    name=product_data["name"],
+                    description=product_data["description"],
+                    price=product_data["price"],
+                    quantity=product_data["quantity"],
                 )
                 products.append(product)
 
             # Создаем категорию
             category = Category(
-                name=category_data['name'],
-                description=category_data['description'],
-                products=products
+                name=category_data["name"],
+                description=category_data["description"],
+                products=products,
             )
             categories.append(category)
 
@@ -86,13 +86,10 @@ def get_categories_summary(categories: List[Category]) -> dict:
     total_products = sum(len(category.products) for category in categories)
 
     return {
-        'total_categories': total_categories,
-        'total_products': total_products,
-        'categories': [
-            {
-                'name': category.name,
-                'product_count': len(category.products)
-            }
+        "total_categories": total_categories,
+        "total_products": total_products,
+        "categories": [
+            {"name": category.name, "product_count": len(category.products)}
             for category in categories
-        ]
+        ],
     }
