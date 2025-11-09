@@ -291,9 +291,15 @@ class TestIntegration:
         category1 = Category("Кат1", "Описание1", [product])
         category2 = Category("Кат2", "Описание2", [product])
 
-        # Проверяем счетчики
+        # Проверяем счетчики (ИСПОЛЬЗУЕМ переменные)
         assert Category.category_count == 2
         assert Category.product_count == 2  # Продукт учтен дважды!
+
+        # Дополнительные проверки с использованием переменных
+        assert len(category1.products) == 1
+        assert len(category2.products) == 1
+        assert category1.products[0] is product
+        assert category2.products[0] is product
 
     def test_complex_scenario(self):
         """Тест сложного сценария с множеством категорий и продуктов."""
@@ -324,15 +330,18 @@ class TestIntegration:
         assert Category.category_count == 3
         assert Category.product_count == 8  # 3 + 2 + 3 = 8
 
-        # Проверяем доступность через экземпляры
+        # Проверяем доступность через экземпляры (ИСПОЛЬЗУЕМ переменные)
         assert electronics.category_count == 3
         assert electronics.product_count == 8
+        assert len(electronics.products) == 3
 
         assert books.category_count == 3
         assert books.product_count == 8
+        assert len(books.products) == 2
 
         assert clothing.category_count == 3
         assert clothing.product_count == 8
+        assert len(clothing.products) == 3
 
 
 # Фикстуры для pytest

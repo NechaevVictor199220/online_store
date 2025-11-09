@@ -1,6 +1,7 @@
 import pytest
 import json
 import os
+
 from src.online_store.json_loader import load_categories_from_json, get_categories_summary
 from src.online_store.models import Category, Product
 
