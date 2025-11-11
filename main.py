@@ -1,5 +1,8 @@
 from src.online_store.models import Product, Category
-from src.online_store.json_loader import load_categories_from_json, get_categories_summary
+from src.online_store.json_loader import (
+    load_categories_from_json,
+    get_categories_summary,
+)
 
 
 def main():
@@ -12,7 +15,9 @@ def main():
     Category.product_count = 0
 
     print("\n1. Создание товаров с приватной ценой:")
-    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    product1 = Product(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+    )
     print(f"   Товар создан: {product1.name}")
     print(f"   Цена через геттер: {product1.price} руб.")
 
@@ -42,7 +47,7 @@ def main():
         "name": "Xiaomi Redmi Note 11",
         "description": "1024GB, Синий",
         "price": 31000.0,
-        "quantity": 14
+        "quantity": 14,
     }
     product3 = Product.new_product(product_data)
     category1.add_product(product3)

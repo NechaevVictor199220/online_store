@@ -19,7 +19,7 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         KeyError: Если в JSON отсутствуют обязательные поля
     """
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             data = json.load(file)
 
         categories = []
@@ -32,16 +32,16 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         for category_data in data:
             # Создаем продукты для категории
             products = []
-            for product_data in category_data.get('products', []):
+            for product_data in category_data.get("products", []):
                 # Используем класс-метод для создания товара
                 product = Product.new_product(product_data)
                 products.append(product)
 
             # Создаем категорию
             category = Category(
-                name=category_data['name'],
-                description=category_data['description'],
-                products=products
+                name=category_data["name"],
+                description=category_data["description"],
+                products=products,
             )
             categories.append(category)
 
@@ -70,13 +70,10 @@ def get_categories_summary(categories: List[Category]) -> dict:
     total_products = sum(len(category._Category__products) for category in categories)
 
     return {
-        'total_categories': total_categories,
-        'total_products': total_products,
-        'categories': [
-            {
-                'name': category.name,
-                'product_count': len(category._Category__products)
-            }
+        "total_categories": total_categories,
+        "total_products": total_products,
+        "categories": [
+            {"name": category.name, "product_count": len(category._Category__products)}
             for category in categories
-        ]
+        ],
     }

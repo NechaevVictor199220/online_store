@@ -10,9 +10,9 @@ class TestProductAccessModifiers:
         product = Product("Тест", "Описание", 100.0, 5)
 
         # Проверяем, что атрибут приватный
-        assert hasattr(product, '_price')
+        assert hasattr(product, "_price")
         # property 'price' существует, но это геттер, а не атрибут
-        assert hasattr(product, 'price')  # Исправлено: property существует
+        assert hasattr(product, "price")  # Исправлено: property существует
 
     def test_price_getter(self):
         """Тест геттера для цены."""
@@ -64,7 +64,7 @@ class TestProductAccessModifiers:
             "name": "Новый товар",
             "description": "Описание нового товара",
             "price": 500.0,
-            "quantity": 10
+            "quantity": 10,
         }
 
         product = Product.new_product(product_data)
@@ -90,9 +90,9 @@ class TestCategoryAccessModifiers:
         category = Category("Категория", "Описание", products)
 
         # Проверяем, что атрибут приватный
-        assert hasattr(category, '_Category__products')
+        assert hasattr(category, "_Category__products")
         # property 'products' существует, но это геттер, а не атрибут
-        assert hasattr(category, 'products')  # Исправлено: property существует
+        assert hasattr(category, "products")  # Исправлено: property существует
 
     def test_add_product_method(self):
         """Тест метода add_product."""
@@ -113,7 +113,7 @@ class TestCategoryAccessModifiers:
         """Тест геттера для products."""
         products = [
             Product("Товар1", "Описание1", 100.0, 5),
-            Product("Товар2", "Описание2", 200.0, 3)
+            Product("Товар2", "Описание2", 200.0, 3),
         ]
         category = Category("Категория", "Описание", products)
 
@@ -195,14 +195,14 @@ class TestIntegrationWithAccessModifiers:
                         "name": "Товар из JSON",
                         "description": "Описание товара",
                         "price": 150.0,
-                        "quantity": 7
+                        "quantity": 7,
                     }
-                ]
+                ],
             }
         ]
 
         json_file = tmp_path / "test.json"
-        with open(json_file, 'w', encoding='utf-8') as f:
+        with open(json_file, "w", encoding="utf-8") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=2)
 
         categories = load_categories_from_json(json_file)
@@ -240,13 +240,11 @@ class TestCategoryInitialization:
         """Тест базовой инициализации категории."""
         products = [
             Product("Товар1", "Описание1", 100.0, 5),
-            Product("Товар2", "Описание2", 200.0, 3)
+            Product("Товар2", "Описание2", 200.0, 3),
         ]
 
         category = Category(
-            name="Электроника",
-            description="Электронные товары",
-            products=products
+            name="Электроника", description="Электронные товары", products=products
         )
 
         assert category.name == "Электроника"
@@ -315,18 +313,18 @@ class TestIntegration:
         products_electronics = [
             Product("Смартфон", "Описание", 50000.0, 10),
             Product("Ноутбук", "Описание", 80000.0, 5),
-            Product("Планшет", "Описание", 30000.0, 8)
+            Product("Планшет", "Описание", 30000.0, 8),
         ]
 
         products_books = [
             Product("Книга1", "Описание", 500.0, 20),
-            Product("Книга2", "Описание", 700.0, 15)
+            Product("Книга2", "Описание", 700.0, 15),
         ]
 
         products_clothing = [
             Product("Футболка", "Описание", 1000.0, 50),
             Product("Джинсы", "Описание", 3000.0, 30),
-            Product("Куртка", "Описание", 5000.0, 10)
+            Product("Куртка", "Описание", 5000.0, 10),
         ]
 
         # Создаем категории

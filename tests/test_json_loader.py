@@ -1,7 +1,10 @@
 import pytest
 import json
 import os
-from src.online_store.json_loader import load_categories_from_json, get_categories_summary
+from src.online_store.json_loader import (
+    load_categories_from_json,
+    get_categories_summary,
+)
 from src.online_store.models import Category, Product
 
 
@@ -25,14 +28,14 @@ class TestJsonLoader:
                         "name": "Тестовый товар",
                         "description": "Тестовое описание товара",
                         "price": 1000.0,
-                        "quantity": 5
+                        "quantity": 5,
                     }
-                ]
+                ],
             }
         ]
 
         json_file = tmp_path / "test_products.json"
-        with open(json_file, 'w', encoding='utf-8') as f:
+        with open(json_file, "w", encoding="utf-8") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=2)
 
         # Загружаем категории
@@ -60,9 +63,9 @@ class TestJsonLoader:
                         "name": "Товар 1",
                         "description": "Описание товара 1",
                         "price": 100.0,
-                        "quantity": 10
+                        "quantity": 10,
                     }
-                ]
+                ],
             },
             {
                 "name": "Категория 2",
@@ -72,20 +75,20 @@ class TestJsonLoader:
                         "name": "Товар 2",
                         "description": "Описание товара 2",
                         "price": 200.0,
-                        "quantity": 5
+                        "quantity": 5,
                     },
                     {
                         "name": "Товар 3",
                         "description": "Описание товара 3",
                         "price": 300.0,
-                        "quantity": 3
-                    }
-                ]
-            }
+                        "quantity": 3,
+                    },
+                ],
+            },
         ]
 
         json_file = tmp_path / "test_products.json"
-        with open(json_file, 'w', encoding='utf-8') as f:
+        with open(json_file, "w", encoding="utf-8") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=2)
 
         categories = load_categories_from_json(json_file)
@@ -110,15 +113,11 @@ class TestJsonLoader:
         """Тест загрузки категории с пустым списком товаров."""
         # ПРАВИЛЬНАЯ СТРУКТУРА: список категорий
         json_data = [
-            {
-                "name": "Пустая категория",
-                "description": "Описание",
-                "products": []
-            }
+            {"name": "Пустая категория", "description": "Описание", "products": []}
         ]
 
         json_file = tmp_path / "test_products.json"
-        with open(json_file, 'w', encoding='utf-8') as f:
+        with open(json_file, "w", encoding="utf-8") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=2)
 
         categories = load_categories_from_json(json_file)
@@ -137,7 +136,7 @@ class TestJsonLoader:
     def test_load_categories_from_json_invalid_json(self, tmp_path):
         """Тест обработки некорректного JSON."""
         json_file = tmp_path / "invalid.json"
-        with open(json_file, 'w', encoding='utf-8') as f:
+        with open(json_file, "w", encoding="utf-8") as f:
             f.write("invalid json content")
 
         with pytest.raises(json.JSONDecodeError):
@@ -150,12 +149,12 @@ class TestJsonLoader:
             {
                 "name": "Категория",
                 # Отсутствует description - ДОЛЖНО ВЫЗВАТЬ KeyError
-                "products": []
+                "products": [],
             }
         ]
 
         json_file = tmp_path / "test_products.json"
-        with open(json_file, 'w', encoding='utf-8') as f:
+        with open(json_file, "w", encoding="utf-8") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=2)
 
         with pytest.raises(KeyError):
@@ -166,24 +165,24 @@ class TestJsonLoader:
         # Создаем тестовые категории
         products1 = [
             Product("Товар1", "Описание1", 100.0, 5),
-            Product("Товар2", "Описание2", 200.0, 3)
+            Product("Товар2", "Описание2", 200.0, 3),
         ]
         products2 = [Product("Товар3", "Описание3", 300.0, 2)]
 
         categories = [
             Category("Кат1", "Описание1", products1),
-            Category("Кат2", "Описание2", products2)
+            Category("Кат2", "Описание2", products2),
         ]
 
         summary = get_categories_summary(categories)
 
-        assert summary['total_categories'] == 2
-        assert summary['total_products'] == 3
-        assert len(summary['categories']) == 2
-        assert summary['categories'][0]['name'] == "Кат1"
-        assert summary['categories'][0]['product_count'] == 2
-        assert summary['categories'][1]['name'] == "Кат2"
-        assert summary['categories'][1]['product_count'] == 1
+        assert summary["total_categories"] == 2
+        assert summary["total_products"] == 3
+        assert len(summary["categories"]) == 2
+        assert summary["categories"][0]["name"] == "Кат1"
+        assert summary["categories"][0]["product_count"] == 2
+        assert summary["categories"][1]["name"] == "Кат2"
+        assert summary["categories"][1]["product_count"] == 1
 
 
 @pytest.fixture
@@ -199,14 +198,14 @@ def sample_json_file(tmp_path):
                     "name": "Фикстурный товар",
                     "description": "Описание товара из фикстуры",
                     "price": 999.99,
-                    "quantity": 7
+                    "quantity": 7,
                 }
-            ]
+            ],
         }
     ]
 
     json_file = tmp_path / "fixture_products.json"
-    with open(json_file, 'w', encoding='utf-8') as f:
+    with open(json_file, "w", encoding="utf-8") as f:
         json.dump(json_data, f, ensure_ascii=False, indent=2)
 
     return json_file
@@ -244,15 +243,15 @@ class TestJsonLoaderWithOldStructure:
                             "name": "Старый товар",
                             "description": "Описание товара",
                             "price": 500.0,
-                            "quantity": 2
+                            "quantity": 2,
                         }
-                    ]
+                    ],
                 }
             ]
         }
 
         json_file = tmp_path / "test_old_products.json"
-        with open(json_file, 'w', encoding='utf-8') as f:
+        with open(json_file, "w", encoding="utf-8") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=2)
 
         # Эта структура должна вызвать ошибку

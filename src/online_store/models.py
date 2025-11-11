@@ -3,7 +3,9 @@ class Product:
     Класс для представления товара в магазине.
     """
 
-    def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
+    def __init__(
+        self, name: str, description: str, price: float, quantity: int
+    ) -> None:
         """
         Инициализация объекта Product.
 
@@ -40,7 +42,7 @@ class Product:
             self._price = new_price
 
     @classmethod
-    def new_product(cls, product_data: dict) -> 'Product':
+    def new_product(cls, product_data: dict) -> "Product":
         """
         Класс-метод для создания нового товара из словаря.
 
@@ -51,10 +53,10 @@ class Product:
             Product: Созданный объект товара
         """
         return cls(
-            name=product_data['name'],
-            description=product_data['description'],
-            price=product_data['price'],
-            quantity=product_data['quantity']
+            name=product_data["name"],
+            description=product_data["description"],
+            price=product_data["price"],
+            quantity=product_data["quantity"],
         )
 
     def __repr__(self) -> str:
@@ -109,7 +111,9 @@ class Category:
         """
         products_info = []
         for product in self.__products:
-            products_info.append(f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.")
+            products_info.append(
+                f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт."
+            )
         return "\n".join(products_info)
 
     def __repr__(self) -> str:
