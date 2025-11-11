@@ -2,6 +2,234 @@ import pytest
 from src.online_store.models import Product, Category
 
 
+class TestProductAccessModifiers:
+    """Тесты для приватных атрибутов и методов доступа Product."""
+
+    def test_price_is_private(self):
+        """Тест, что атрибут цены приватный."""
+        product = Product("Тест", "Описание", 100.0, 5)
+
+        # Проверяем, что атрибут приватный
+        assert hasattr(product, '_price')
+        assert not hasattr(product, 'price')  # Это свойство, не атрибут
+
+    def test_price_getter(self):
+        """Тест геттера для цены."""
+        product = Product("Тест", "Описание", 150.0, 3)
+
+        # Проверяем, что геттер работает
+        assert product.price == 150.0
+
+    def test_price_setter_positive(self):
+        """Тест сеттера для цены с положительным значением."""
+        product = Product("Тест", "Описание", 100.0, 5)
+
+        # Меняем цену на положительное значение
+        product.price = 200.0
+
+        assert product.price == 200.0
+
+    def test_price_setter_negative(self, capsys):
+        """Тест сеттера для цены с отрицательным значением."""
+        product = Product("Тест", "Описание", 100.0, 5)
+
+        # Пытаемся установить отрицательную цену
+        product.price = -50.0
+
+        # Проверяем, что цена не изменилась
+        assert product.price == 100.0
+
+        # Проверяем вывод сообщения
+        captured = capsys.readouterr()
+        assert "Цена не должна быть нулевая или отрицательная" in captured.out
+
+    def test_price_setter_zero(self, capsys):
+        """Тест сеттера для цены с нулевым значением."""
+        product = Product("Тест", "Описание", 100.0, 5)
+
+        # Пытаемся установить нулевую цену
+        product.price = 0.0
+
+        # Проверяем, что цена не изменилась
+        assert product.price == 100.0
+
+        # Проверяем вывод сообщения
+        captured = capsys.readouterr()
+        assert "Цена не должна быть нулевая или отрицательная" in captured.out
+
+    def test_new_product_class_method(self):
+        """Тест класс-метода new_product."""
+        product_data = {
+            "name": "Новый товар",
+            "description": "Описание нового товара",
+            "price": 500.0,
+            "quantity": 10
+        }
+
+        product = Product.new_product(product_data)
+
+        assert product.name == "Новый товар"
+        assert product.description == "Описание нового товара"
+        assert product.price == 500.0
+        assert product.quantity == 10
+        assert isinstance(product, Product)
+
+
+class TestCategoryAccessModifiers:
+    """Тесты для приватных атрибутов и методов доступа Category."""
+
+    def setup_method(self):
+        """Сброс счетчиков перед каждым тестом."""
+        Category.category_count = 0
+        Category.product_count = 0
+
+    def test_products_is_private(self):
+        """Тест, что атрибут products приватный."""
+        products = [Product("Товар1", "Описание1", 100.0, 5)]
+        category = Category("Категория", "Описание", products)
+
+        # Проверяем, что атрибут приватный
+        assert hasattr(category, '_Category__products')
+        assert not hasattr(category, 'products')  # Это свойство, не атрибут
+
+    def test_add_product_method(self):
+        """Тест метода add_product."""
+        category = Category("Категория", "Описание", [])
+        product = Product("Новый товар", "Описание", 200.0, 3)
+
+        initial_count = Category.product_count
+
+        # Добавляем товар
+        category.add_product(product)
+
+        # Проверяем, что товар добавлен и счетчик увеличился
+        assert Category.product_count == initial_count + 1
+        # Проверяем через геттер
+        assert "Новый товар" in category.products
+
+    def test_products_getter(self):
+        """Тест геттера для products."""
+        products = [
+            Product("Товар1", "Описание1", 100.0, 5),
+            Product("Товар2", "Описание2", 200.0, 3)
+        ]
+        category = Category("Категория", "Описание", products)
+
+        products_str = category.products
+
+        # Проверяем формат вывода
+        assert "Товар1, 100.0 руб. Остаток: 5 шт." in products_str
+        assert "Товар2, 200.0 руб. Остаток: 3 шт." in products_str
+        assert isinstance(products_str, str)
+
+    def test_products_getter_empty(self):
+        """Тест геттера для пустого списка товаров."""
+        category = Category("Пустая категория", "Описание", [])
+
+        products_str = category.products
+
+        assert products_str == ""
+
+    def test_cannot_access_private_products_directly(self):
+        """Тест, что нельзя напрямую обратиться к приватному атрибуту."""
+        products = [Product("Товар", "Описание", 100.0, 5)]
+        category = Category("Категория", "Описание", products)
+
+        # Не должно быть публичного атрибута products
+        with pytest.raises(AttributeError):
+            _ = category.products  # Это вызовет геттер, но не даст доступ к списку
+
+    def test_multiple_add_product(self):
+        """Тест добавления нескольких товаров."""
+        category = Category("Категория", "Описание", [])
+
+        initial_count = Category.product_count
+
+        # Добавляем несколько товаров
+        product1 = Product("Товар1", "Описание1", 100.0, 2)
+        product2 = Product("Товар2", "Описание2", 200.0, 3)
+
+        category.add_product(product1)
+        category.add_product(product2)
+
+        assert Category.product_count == initial_count + 2
+        products_str = category.products
+        assert "Товар1" in products_str
+        assert "Товар2" in products_str
+
+
+class TestIntegrationWithAccessModifiers:
+    """Интеграционные тесты с новыми методами доступа."""
+
+    def setup_method(self):
+        """Сброс счетчиков перед каждым тестом."""
+        Category.category_count = 0
+        Category.product_count = 0
+
+    def test_json_loader_with_new_methods(self, tmp_path):
+        """Тест, что JSON загрузчик работает с новыми методами."""
+        import json
+        from src.online_store.json_loader import load_categories_from_json
+
+        json_data = [
+            {
+                "name": "Тестовая категория",
+                "description": "Описание",
+                "products": [
+                    {
+                        "name": "Товар из JSON",
+                        "description": "Описание товара",
+                        "price": 150.0,
+                        "quantity": 7
+                    }
+                ]
+            }
+        ]
+
+        json_file = tmp_path / "test.json"
+        with open(json_file, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, ensure_ascii=False, indent=2)
+
+        categories = load_categories_from_json(json_file)
+
+        # Проверяем, что все работает с новыми методами доступа
+        assert len(categories) == 1
+        assert "Товар из JSON" in categories[0].products
+        assert categories[0].price == 150.0  # Через геттер
+
+    def test_add_product_updates_counters(self):
+        """Тест, что add_product обновляет счетчики."""
+        initial_category_count = Category.category_count
+        initial_product_count = Category.product_count
+
+        category = Category("Категория", "Описание", [])
+        product = Product("Товар", "Описание", 100.0, 5)
+
+        category.add_product(product)
+
+        assert Category.category_count == initial_category_count + 1
+        assert Category.product_count == initial_product_count + 1
+
+
+# Сохраняем старые тесты для обратной совместимости
+class TestProductInitialization:
+    """Старые тесты для обратной совместимости."""
+
+    def test_product_initialization_basic(self):
+        """Тест базовой инициализации продукта."""
+        product = Product(
+            name="Телефон",
+            description="Смартфон",
+            price=50000.0,
+            quantity=10
+        )
+
+        assert product.name == "Телефон"
+        assert product.description == "Смартфон"
+        assert product.price == 50000.0  # Через геттер
+        assert product.quantity == 10
+
+
 class TestProductInitialization:
     """Тесты для проверки корректности инициализации объектов класса Product."""
 

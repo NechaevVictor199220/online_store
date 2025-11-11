@@ -1,75 +1,78 @@
 from src.online_store.models import Product, Category
-from src.online_store.json_loader import (
-    load_categories_from_json,
-    get_categories_summary,
-)
+from src.online_store.json_loader import load_categories_from_json, get_categories_summary
 
 
 def main():
-    """Основная функция для демонстрации работы с JSON загрузчиком."""
+    """Основная функция для демонстрации работы с новой функциональностью."""
 
-    print("=== ДЕМОНСТРАЦИЯ РУЧНОГО СОЗДАНИЯ ===")
+    print("=== ДЕМОНСТРАЦИЯ НОВОЙ ФУНКЦИОНАЛЬНОСТИ ===")
+
     # Сбрасываем счетчики для чистого теста
     Category.category_count = 0
     Category.product_count = 0
 
-    # Ручное создание (оригинальный код)
-    product1 = Product(
-        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
-    )
-    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+    print("\n1. Создание товаров с приватной ценой:")
+    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    print(f"   Товар создан: {product1.name}")
+    print(f"   Цена через геттер: {product1.price} руб.")
 
-    print("Товар 1:")
-    print(f"  Название: {product1.name}")
-    print(f"  Описание: {product1.description}")
-    print(f"  Цена: {product1.price}")
-    print(f"  Количество: {product1.quantity}")
+    print("\n2. Попытка установить отрицательную цену:")
+    product1.price = -1000.0  # Должно вывести сообщение об ошибке
+    print(f"   Цена после попытки установить отрицательную: {product1.price} руб.")
 
-    category1 = Category(
-        "Смартфоны",
-        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
-        [product1, product2, product3],
-    )
+    print("\n3. Установка корректной цены:")
+    product1.price = 190000.0
+    print(f"   Новая цена: {product1.price} руб.")
 
-    print(f"\nКатегория: {category1.name}")
-    print(f"Проверка названия: {category1.name == 'Смартфоны'}")
-    print(f"Описание: {category1.description}")
-    print(f"Количество товаров в категории: {len(category1.products)}")
-    print(f"Всего категорий (счетчик класса): {Category.category_count}")
-    print(f"Всего товаров (счетчик класса): {Category.product_count}")
+    print("\n4. Создание категории с приватным списком товаров:")
+    category1 = Category("Смартфоны", "Современные смартфоны", [])
+    print(f"   Категория создана: {category1.name}")
+
+    print("\n5. Добавление товаров через add_product():")
+    category1.add_product(product1)
+    product2 = Product("iPhone 15", "512GB, Gray space", 210000.0, 8)
+    category1.add_product(product2)
+    print(f"   Товары добавлены в категорию")
+
+    print("\n6. Вывод товаров через геттер:")
+    print(category1.products)
+
+    print("\n7. Использование класс-метода new_product():")
+    product_data = {
+        "name": "Xiaomi Redmi Note 11",
+        "description": "1024GB, Синий",
+        "price": 31000.0,
+        "quantity": 14
+    }
+    product3 = Product.new_product(product_data)
+    category1.add_product(product3)
+    print(f"   Товар создан класс-методом: {product3.name}")
+
+    print("\n8. Итоговый список товаров в категории:")
+    print(category1.products)
+
+    print(f"\n9. Статистика:")
+    print(f"   Всего категорий: {Category.category_count}")
+    print(f"   Всего товаров: {Category.product_count}")
 
     print("\n=== ДЕМОНСТРАЦИЯ ЗАГРУЗКИ ИЗ JSON ===")
 
     try:
-        # Загрузка данных из JSON файла
         categories = load_categories_from_json("data/products.json")
-
-        # Получаем сводную информацию
         summary = get_categories_summary(categories)
 
         print(f"Успешно загружено категорий: {summary['total_categories']}")
         print(f"Общее количество товаров: {summary['total_products']}")
-        print(f"Счетчик категорий класса: {Category.category_count}")
-        print(f"Счетчик товаров класса: {Category.product_count}")
 
-        print("\nДетальная информация по категориям:")
-        for i, category in enumerate(categories, 1):
-            print(f"\n{i}. Категория: {category.name}")
-            print(f"   Описание: {category.description}")
-            print(f"   Количество товаров: {len(category.products)}")
-            print("   Товары:")
-            for j, product in enumerate(category.products, 1):
-                print(f"     {j}. {product.name}")
-                print(f"        Цена: {product.price} руб.")
-                print(f"        В наличии: {product.quantity} шт.")
-                print(f"        Описание: {product.description}")
+        for category in categories:
+            print(f"\nКатегория: {category.name}")
+            print("Товары:")
+            print(category.products)
 
     except FileNotFoundError:
-        print("Файл data/products.json не найден. Создайте файл с данными.")
+        print("Файл data/products.json не найден.")
     except Exception as e:
         print(f"Ошибка при загрузке данных: {e}")
-        print("Убедитесь, что структура JSON файла правильная.")
 
 
 if __name__ == "__main__":
