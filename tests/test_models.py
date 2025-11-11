@@ -1,28 +1,6 @@
 import pytest
 from src.online_store.models import Product, Category
 
-@pytest.fixture
-def sample_product():
-    """Фикстура для создания тестового продукта."""
-    return Product("Тестовый товар", "Тестовое описание", 1000.0, 5)
-
-
-@pytest.fixture
-def sample_category():
-    """Фикстура для создания тестовой категории."""
-    Category.category_count = 0
-    Category.product_count = 0
-    products = [Product("Товар1", "Описание1", 100.0, 5)]
-    return Category("Тестовая категория", "Тестовое описание", products)
-
-
-@pytest.fixture
-def empty_category():
-    """Фикстура для создания пустой категории."""
-    Category.category_count = 0
-    Category.product_count = 0
-    return Category("Пустая категория", "Описание", [])
-
 
 class TestProductAccessModifiers:
     """Тесты для приватных атрибутов и методов доступа Product."""
@@ -249,6 +227,7 @@ class TestIntegrationWithAccessModifiers:
         assert Category.category_count == initial_category_count + 1
         assert Category.product_count == initial_product_count + 1
 
+
 class TestCategoryInitialization:
     """Тесты для проверки корректности инициализации объектов класса Category."""
 
@@ -376,6 +355,30 @@ class TestIntegration:
         assert "Футболка" in clothing_products
         assert "Джинсы" in clothing_products
         assert "Куртка" in clothing_products
+
+
+# Фикстуры для тестов
+@pytest.fixture
+def sample_product():
+    """Фикстура для создания тестового продукта."""
+    return Product("Тестовый товар", "Тестовое описание", 1000.0, 5)
+
+
+@pytest.fixture
+def sample_category():
+    """Фикстура для создания тестовой категории."""
+    Category.category_count = 0
+    Category.product_count = 0
+    products = [Product("Товар1", "Описание1", 100.0, 5)]
+    return Category("Тестовая категория", "Тестовое описание", products)
+
+
+@pytest.fixture
+def empty_category():
+    """Фикстура для создания пустой категории."""
+    Category.category_count = 0
+    Category.product_count = 0
+    return Category("Пустая категория", "Описание", [])
 
 
 class TestWithFixtures:
