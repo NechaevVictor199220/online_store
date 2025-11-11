@@ -28,7 +28,7 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         Category.category_count = 0
         Category.product_count = 0
 
-        # data - это уже список категорий
+        # data - это уже список категорий (новая структура)
         for category_data in data:
             # Создаем продукты для категории
             products = []
@@ -66,7 +66,8 @@ def get_categories_summary(categories: List[Category]) -> dict:
         dict: Словарь со статистикой
     """
     total_categories = len(categories)
-    total_products = sum(len(category._Category__products) for category in categories)  # Доступ к приватному атрибуту
+    # Используем приватный атрибут для подсчета
+    total_products = sum(len(category._Category__products) for category in categories)
 
     return {
         'total_categories': total_categories,
@@ -74,7 +75,7 @@ def get_categories_summary(categories: List[Category]) -> dict:
         'categories': [
             {
                 'name': category.name,
-                'product_count': len(category._Category__products)  # Доступ к приватному атрибуту
+                'product_count': len(category._Category__products)
             }
             for category in categories
         ]

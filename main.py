@@ -32,7 +32,7 @@ def main():
     category1.add_product(product1)
     product2 = Product("iPhone 15", "512GB, Gray space", 210000.0, 8)
     category1.add_product(product2)
-    print(f"   Товары добавлены в категорию")
+    print("Товары добавлены в категорию")
 
     print("\n6. Вывод товаров через геттер:")
     print(category1.products)
