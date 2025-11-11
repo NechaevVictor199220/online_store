@@ -8,10 +8,7 @@ class TestProductInitialization:
     def test_product_initialization_basic(self):
         """Тест базовой инициализации продукта."""
         product = Product(
-            name="Телефон",
-            description="Смартфон",
-            price=50000.0,
-            quantity=10
+            name="Телефон", description="Смартфон", price=50000.0, quantity=10
         )
 
         assert product.name == "Телефон"
@@ -25,7 +22,7 @@ class TestProductInitialization:
             name="iPhone 15 Pro Max",
             description="Смартфон 256GB, Space Black",
             price=150000.99,
-            quantity=3
+            quantity=3,
         )
 
         assert product.name == "iPhone 15 Pro Max"
@@ -61,7 +58,7 @@ class TestProductInitialization:
         products = [
             Product("Товар1", "Описание1", 100.0, 10),
             Product("Товар2", "Описание2", 200.0, 20),
-            Product("Товар3", "Описание3", 300.0, 30)
+            Product("Товар3", "Описание3", 300.0, 30),
         ]
 
         for i, product in enumerate(products, 1):
@@ -83,13 +80,11 @@ class TestCategoryInitialization:
         """Тест базовой инициализации категории."""
         products = [
             Product("Товар1", "Описание1", 100.0, 5),
-            Product("Товар2", "Описание2", 200.0, 3)
+            Product("Товар2", "Описание2", 200.0, 3),
         ]
 
         category = Category(
-            name="Электроника",
-            description="Электронные товары",
-            products=products
+            name="Электроника", description="Электронные товары", products=products
         )
 
         assert category.name == "Электроника"
@@ -121,7 +116,7 @@ class TestCategoryInitialization:
         category = Category(
             name="Электроника & Гаджеты",
             description="Категория с & символами!",
-            products=products
+            products=products,
         )
 
         assert category.name == "Электроника & Гаджеты"
@@ -159,7 +154,7 @@ class TestProductCount:
         products = [
             Product("Товар1", "Описание1", 100.0, 5),
             Product("Товар2", "Описание2", 200.0, 3),
-            Product("Товар3", "Описание3", 300.0, 7)
+            Product("Товар3", "Описание3", 300.0, 7),
         ]
 
         Category("Категория", "Описание", products)
@@ -170,17 +165,15 @@ class TestProductCount:
         """Тест подсчета продуктов в нескольких категориях."""
         products1 = [
             Product("Товар1", "Описание1", 100.0, 5),
-            Product("Товар2", "Описание2", 200.0, 3)
+            Product("Товар2", "Описание2", 200.0, 3),
         ]
 
-        products2 = [
-            Product("Товар3", "Описание3", 300.0, 2)
-        ]
+        products2 = [Product("Товар3", "Описание3", 300.0, 2)]
 
         products3 = [
             Product("Товар4", "Описание4", 400.0, 1),
             Product("Товар5", "Описание5", 500.0, 4),
-            Product("Товар6", "Описание6", 600.0, 2)
+            Product("Товар6", "Описание6", 600.0, 2),
         ]
 
         Category("Кат1", "Описание1", products1)  # +2 продукта
@@ -200,7 +193,7 @@ class TestProductCount:
 
         products2 = [
             Product("Товар2", "Описание", 200.0, 3),
-            Product("Товар3", "Описание", 300.0, 2)
+            Product("Товар3", "Описание", 300.0, 2),
         ]  # 2 продукта
         Category("Непустая2", "Описание", products2)
 
@@ -210,7 +203,7 @@ class TestProductCount:
         """Тест доступа к счетчику продуктов через экземпляр."""
         products = [
             Product("Товар1", "Описание1", 100.0, 5),
-            Product("Товар2", "Описание2", 200.0, 3)
+            Product("Товар2", "Описание2", 200.0, 3),
         ]
 
         category = Category("Категория", "Описание", products)
@@ -291,9 +284,15 @@ class TestIntegration:
         category1 = Category("Кат1", "Описание1", [product])
         category2 = Category("Кат2", "Описание2", [product])
 
-        # Проверяем счетчики
+        # Проверяем счетчики (ИСПОЛЬЗУЕМ переменные)
         assert Category.category_count == 2
         assert Category.product_count == 2  # Продукт учтен дважды!
+
+        # Дополнительные проверки с использованием переменных
+        assert len(category1.products) == 1
+        assert len(category2.products) == 1
+        assert category1.products[0] is product
+        assert category2.products[0] is product
 
     def test_complex_scenario(self):
         """Тест сложного сценария с множеством категорий и продуктов."""
@@ -301,18 +300,18 @@ class TestIntegration:
         products_electronics = [
             Product("Смартфон", "Описание", 50000.0, 10),
             Product("Ноутбук", "Описание", 80000.0, 5),
-            Product("Планшет", "Описание", 30000.0, 8)
+            Product("Планшет", "Описание", 30000.0, 8),
         ]
 
         products_books = [
             Product("Книга1", "Описание", 500.0, 20),
-            Product("Книга2", "Описание", 700.0, 15)
+            Product("Книга2", "Описание", 700.0, 15),
         ]
 
         products_clothing = [
             Product("Футболка", "Описание", 1000.0, 50),
             Product("Джинсы", "Описание", 3000.0, 30),
-            Product("Куртка", "Описание", 5000.0, 10)
+            Product("Куртка", "Описание", 5000.0, 10),
         ]
 
         # Создаем категории
@@ -324,15 +323,18 @@ class TestIntegration:
         assert Category.category_count == 3
         assert Category.product_count == 8  # 3 + 2 + 3 = 8
 
-        # Проверяем доступность через экземпляры
+        # Проверяем доступность через экземпляры (ИСПОЛЬЗУЕМ переменные)
         assert electronics.category_count == 3
         assert electronics.product_count == 8
+        assert len(electronics.products) == 3
 
         assert books.category_count == 3
         assert books.product_count == 8
+        assert len(books.products) == 2
 
         assert clothing.category_count == 3
         assert clothing.product_count == 8
+        assert len(clothing.products) == 3
 
 
 # Фикстуры для pytest

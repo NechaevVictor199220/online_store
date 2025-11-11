@@ -1,0 +1,177 @@
+# Online Store
+
+Проект интернет-магазина с системой управления товарами и категориями.
+
+## Реализованный функционал
+
+### Базовые классы
+- **Класс Product**: Представляет товар с атрибутами: название, описание, цена, количество в наличии
+- **Класс Category**: Представляет категорию товаров с атрибутами: название, описание, список товаров
+
+### Атрибуты класса Category
+- **category_count**: Автоматический подсчет количества созданных категорий
+- **product_count**: Автоматический подсчет общего количества товаров во всех категориях
+
+### Загрузка данных из JSON
+- Реализована функция `load_categories_from_json()` для загрузки категорий и товаров из JSON файла
+- Поддержка обработки ошибок (файл не найден, некорректный JSON, отсутствующие поля)
+- Автоматическое создание объектов Product и Category из JSON данных
+
+### Тестирование
+- Комплексные тесты для инициализации объектов Product и Category
+- Тесты для проверки подсчета количества категорий и товаров
+- Тесты для JSON загрузчика с различными сценариями
+- Покрытие тестами более 75%
+
+### Инструменты разработки
+- Настройка проекта с помощью Poetry
+- Тестирование с pytest и покрытием кода (pytest-cov)
+- Линтинг с flake8
+- Форматирование кода с black
+
+## Структура проекта
+
+~~~online_store/
+├── src/online_store/ # Исходный код
+│ ├── init.py
+│ ├── models.py # Классы Product и Category
+│ └── json_loader.py # Функции загрузки из JSON
+├── tests/ # Тесты
+│ ├── init.py
+│ ├── test_models.py # Тесты моделей
+│ └── test_json_loader.py # Тесты JSON загрузчика
+├── data/
+│ └── products.json # Пример данных в JSON формате
+├── main.py # Демонстрационный скрипт
+└── pyproject.toml # Конфигурация проекта
+~~~
+
+## Установка и запуск
+
+### Установка зависимостей
+
+#### Установка Poetry (если не установлен)
+```
+curl -sSL https://install.python-poetry.org | python3 -
+```
+# Установка зависимостей проекта
+```
+poetry install
+```
+### Активация виртуального окружения
+```
+poetry shell
+```
+### Запуск тестов
+```
+# Все тесты с покрытием
+pytest --cov
+
+# Только тесты моделей
+pytest tests/test_models.py -v
+
+# Только тесты JSON загрузчика
+pytest tests/test_json_loader.py -v
+
+# Тесты с детальным отчетом о покрытии
+pytest --cov=src --cov-report=html
+```
+### Проверка кодстайла
+```
+# Запуск линтера
+poetry run flake8
+
+# Форматирование кода
+poetry run black src tests
+
+# Проверка типов (опционально)
+poetry run mypy src
+```
+### Демонстрация работы
+
+```
+python main.py
+```
+## Пример использования
+### Создание товаров и категорий вручную
+```python
+from src.online_store.models import Product, Category
+
+# Создание товаров
+product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет", 180000.0, 5)
+product2 = Product("iPhone 15", "512GB, Gray space", 210000.0, 8)
+
+# Создание категории
+category = Category(
+    "Смартфоны", 
+    "Современные смартфоны", 
+    [product1, product2]
+)
+
+print(f"Категория: {category.name}")
+print(f"Количество товаров: {len(category.products)}")
+print(f"Всего категорий в системе: {Category.category_count}")
+```
+### Загрузка данных из JSON
+```
+python
+
+from src.online_store.json_loader import load_categories_from_json
+
+# Загрузка категорий и товаров из JSON файла
+categories = load_categories_from_json("data/products.json")
+
+for category in categories:
+    print(f"Категория: {category.name}")
+    for product in category.products:
+        print(f"  - {product.name}: {product.price} руб.")
+```
+Формат JSON файла
+```
+json
+
+[
+  {
+    "name": "Смартфоны",
+    "description": "Современные смартфоны",
+    "products": [
+      {
+        "name": "Samsung Galaxy S23 Ultra",
+        "description": "256GB, Серый цвет, 200MP камера",
+        "price": 180000.0,
+        "quantity": 5
+      }
+    ]
+  }
+]
+```
+### Критерии выполнения
+* Созданы классы Product и Category с необходимыми атрибутами
+
+* Реализованы атрибуты класса для подсчета категорий и товаров
+
+* Написаны тесты для инициализации объектов и подсчета количества
+
+* Покрытие тестами более 75%
+
+* Реализована загрузка данных из JSON файла
+
+* Настроены линтеры и форматеры кода
+
+* Проект настроен с использованием Poetry
+
+### Разработка
+Проект следует принципам GitFlow. Для внесения изменений:
+
+1. Создайте feature-ветку от develop
+
+2. Реализуйте функционал
+
+3. Напишите тесты
+
+4. Запустите проверки: pytest --cov и flake8
+
+5. Создайте pull request в develop
+
+Автор
+[Нечаев Виктор] - [Nechaevvictor199220@gmail.com]
