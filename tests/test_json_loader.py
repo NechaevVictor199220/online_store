@@ -1,9 +1,11 @@
-import pytest
 import json
 import os
+
+import pytest
+
 from src.online_store.json_loader import (
-    load_categories_from_json,
     get_categories_summary,
+    load_categories_from_json,
 )
 from src.online_store.models import Category, Product
 

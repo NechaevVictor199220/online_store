@@ -1,5 +1,6 @@
 import pytest
-from src.online_store.models import Product, Category
+
+from src.online_store.models import Category, Product
 
 
 class TestProductAccessModifiers:
@@ -184,6 +185,7 @@ class TestIntegrationWithAccessModifiers:
     def test_json_loader_with_new_methods(self, tmp_path):
         """Тест, что JSON загрузчик работает с новыми методами."""
         import json
+
         from src.online_store.json_loader import load_categories_from_json
 
         json_data = [
