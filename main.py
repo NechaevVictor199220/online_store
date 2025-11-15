@@ -1,5 +1,8 @@
 from src.online_store.models import Product, Category
-from src.online_store.json_loader import load_categories_from_json, get_categories_summary
+from src.online_store.json_loader import (
+    load_categories_from_json,
+    get_categories_summary,
+)
 
 
 def main():
@@ -12,7 +15,9 @@ def main():
     Category.product_count = 0
 
     print("\n1. Создание товаров:")
-    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    product1 = Product(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+    )
     product2 = Product("iPhone 15", "512GB, Gray space", 210000.0, 8)
     product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
 
@@ -27,7 +32,9 @@ def main():
     print(f"   {product2.name} + {product3.name} = {total_value_2_3} руб.")
 
     print("\n3. Создание категории:")
-    category1 = Category("Смартфоны", "Современные смартфоны", [product1, product2, product3])
+    category1 = Category(
+        "Смартфоны", "Современные смартфоны", [product1, product2, product3]
+    )
     print(f"   Категория: {category1}")  # Используется __str__ Category
 
     print("\n4. Итерация по товарам категории:")
@@ -44,7 +51,7 @@ def main():
     print("\n6. Вывод товаров через геттер:")
     print(category1.products)
 
-    print(f"\n7. Статистика:")
+    print("\n7. Статистика:")
     print(f"   Всего категорий: {Category.category_count}")
     print(f"   Всего товаров: {Category.product_count}")
 

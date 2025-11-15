@@ -3,7 +3,9 @@ class Product:
     Класс для представления товара в магазине.
     """
 
-    def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
+    def __init__(
+        self, name: str, description: str, price: float, quantity: int
+    ) -> None:
         """
         Инициализация объекта Product.
 
@@ -27,7 +29,7 @@ class Product:
         """
         return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
 
-    def __add__(self, other: 'Product') -> float:
+    def __add__(self, other: "Product") -> float:
         """
         Сложение товаров - возвращает общую стоимость всех товаров на складе.
 
@@ -67,7 +69,7 @@ class Product:
             self._price = new_price
 
     @classmethod
-    def new_product(cls, product_data: dict) -> 'Product':
+    def new_product(cls, product_data: dict) -> "Product":
         """
         Класс-метод для создания нового товара из словаря.
 
@@ -78,10 +80,10 @@ class Product:
             Product: Созданный объект товара
         """
         return cls(
-            name=product_data['name'],
-            description=product_data['description'],
-            price=product_data['price'],
-            quantity=product_data['quantity']
+            name=product_data["name"],
+            description=product_data["description"],
+            price=product_data["price"],
+            quantity=product_data["quantity"],
         )
 
     def __repr__(self) -> str:

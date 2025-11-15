@@ -1,6 +1,7 @@
 import json
 from typing import List
-from .models import Product, Category
+
+from .models import Category, Product
 
 
 def load_categories_from_json(file_path: str) -> List[Category]:
@@ -19,7 +20,7 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         KeyError: Если в JSON отсутствуют обязательные поля
     """
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             data = json.load(file)
 
         categories = []
@@ -32,20 +33,20 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         for category_data in data:
             # Создаем продукты для категории
             products = []
-            for product_data in category_data.get('products', []):
+            for product_data in category_data.get("products", []):
                 product = Product(
-                    name=product_data['name'],
-                    description=product_data['description'],
-                    price=product_data['price'],
-                    quantity=product_data['quantity']
+                    name=product_data["name"],
+                    description=product_data["description"],
+                    price=product_data["price"],
+                    quantity=product_data["quantity"],
                 )
                 products.append(product)
 
             # Создаем категорию
             category = Category(
-                name=category_data['name'],
-                description=category_data['description'],
-                products=products
+                name=category_data["name"],
+                description=category_data["description"],
+                products=products,
             )
             categories.append(category)
 
@@ -70,16 +71,14 @@ def get_categories_summary(categories: List[Category]) -> dict:
         dict: Словарь со статистикой
     """
     total_categories = len(categories)
-    total_products = sum(len(category.products) for category in categories)
+    # Используем приватный атрибут для подсчета количества товаров
+    total_products = sum(len(category._Category__products) for category in categories)
 
     return {
-        'total_categories': total_categories,
-        'total_products': total_products,
-        'categories': [
-            {
-                'name': category.name,
-                'product_count': len(category.products)
-            }
+        "total_categories": total_categories,
+        "total_products": total_products,  # Количество товаров, а не общая стоимость
+        "categories": [
+            {"name": category.name, "product_count": len(category._Category__products)}
             for category in categories
-        ]
+        ],
     }

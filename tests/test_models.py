@@ -50,7 +50,9 @@ class TestProductMagicMethods:
         """Тест ошибки при сложении с неправильным типом."""
         product = Product("Товар", "Описание", 100.0, 5)
 
-        with pytest.raises(TypeError, match="Можно складывать только объекты класса Product"):
+        with pytest.raises(
+            TypeError, match="Можно складывать только объекты класса Product"
+        ):
             product + "не товар"
 
         with pytest.raises(TypeError):
@@ -95,7 +97,7 @@ class TestCategoryMagicMethods:
         products = [
             Product("Товар1", "Описание", 100.0, 3),  # 3 шт
             Product("Товар2", "Описание", 200.0, 2),  # 2 шт
-            Product("Товар3", "Описание", 300.0, 1)  # 1 шт
+            Product("Товар3", "Описание", 300.0, 1),  # 1 шт
         ]
         category = Category("Категория", "Описание", products)
 
@@ -107,7 +109,7 @@ class TestCategoryMagicMethods:
         products = [
             Product("Товар1", "Описание", 100.0, 0),  # 0 шт
             Product("Товар2", "Описание", 200.0, 5),  # 5 шт
-            Product("Товар3", "Описание", 300.0, 0)  # 0 шт
+            Product("Товар3", "Описание", 300.0, 0),  # 0 шт
         ]
         category = Category("Категория", "Описание", products)
 
@@ -118,7 +120,7 @@ class TestCategoryMagicMethods:
         """Тест, что геттер products использует __str__ Product."""
         products = [
             Product("Товар1", "Описание1", 100.0, 3),
-            Product("Товар2", "Описание2", 200.0, 2)
+            Product("Товар2", "Описание2", 200.0, 2),
         ]
         category = Category("Категория", "Описание", products)
 
@@ -141,7 +143,7 @@ class TestCategoryIterator:
         """Тест создания итератора."""
         products = [
             Product("Товар1", "Описание1", 100.0, 3),
-            Product("Товар2", "Описание2", 200.0, 2)
+            Product("Товар2", "Описание2", 200.0, 2),
         ]
         category = Category("Категория", "Описание", products)
 
@@ -153,7 +155,7 @@ class TestCategoryIterator:
         """Тест итерации по товарам категории."""
         products = [
             Product("Товар1", "Описание1", 100.0, 3),
-            Product("Товар2", "Описание2", 200.0, 2)
+            Product("Товар2", "Описание2", 200.0, 2),
         ]
         category = Category("Категория", "Описание", products)
 
@@ -180,7 +182,7 @@ class TestCategoryIterator:
         """Тест прямого использования next()."""
         products = [
             Product("Товар1", "Описание1", 100.0, 3),
-            Product("Товар2", "Описание2", 200.0, 2)
+            Product("Товар2", "Описание2", 200.0, 2),
         ]
         category = Category("Категория", "Описание", products)
 
@@ -199,7 +201,7 @@ class TestCategoryIterator:
         """Тест нескольких итераций по одной категории."""
         products = [
             Product("Товар1", "Описание1", 100.0, 3),
-            Product("Товар2", "Описание2", 200.0, 2)
+            Product("Товар2", "Описание2", 200.0, 2),
         ]
         category = Category("Категория", "Описание", products)
 
@@ -224,14 +226,14 @@ class TestIntegrationMagicMethods:
         """Тест интеграции геттера products с __str__ Product."""
         products = [
             Product("Смартфон", "Описание", 50000.0, 10),
-            Product("Ноутбук", "Описание", 80000.0, 5)
+            Product("Ноутбук", "Описание", 80000.0, 5),
         ]
         category = Category("Электроника", "Техника", products)
 
         products_str = category.products
 
         # Проверяем форматирование через __str__ Product
-        lines = products_str.split('\n')
+        lines = products_str.split("\n")
         assert len(lines) == 2
         assert lines[0] == "Смартфон, 50000.0 руб. Остаток: 10 шт."
         assert lines[1] == "Ноутбук, 80000.0 руб. Остаток: 5 шт."
@@ -241,7 +243,7 @@ class TestIntegrationMagicMethods:
         products = [
             Product("Товар1", "Описание", 100.0, 10),
             Product("Товар2", "Описание", 200.0, 5),
-            Product("Товар3", "Описание", 300.0, 3)
+            Product("Товар3", "Описание", 300.0, 3),
         ]
         category = Category("Категория", "Описание", products)
 
