@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from .models import Category, Product
+from .models import Category, LawnGrass, Product, Smartphone
 
 
 def load_categories_from_json(file_path: str) -> List[Category]:
@@ -29,17 +29,13 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         Category.category_count = 0
         Category.product_count = 0
 
-        # data - это уже список категорий (новая структура)
+        # data - это уже список категорий
         for category_data in data:
             # Создаем продукты для категории
             products = []
             for product_data in category_data.get("products", []):
-                product = Product(
-                    name=product_data["name"],
-                    description=product_data["description"],
-                    price=product_data["price"],
-                    quantity=product_data["quantity"],
-                )
+                # Определяем тип товара и создаем соответствующий объект
+                product = create_product_from_data(product_data)
                 products.append(product)
 
             # Создаем категорию
@@ -60,6 +56,45 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         raise KeyError(f"Отсутствует обязательное поле в JSON: {e}")
 
 
+def create_product_from_data(product_data: dict) -> Product:
+    """
+    Создает объект продукта на основе данных из JSON.
+
+    Args:
+        product_data: Словарь с данными товара
+
+    Returns:
+        Product: Созданный объект товара
+    """
+    # Определяем тип товара по наличию специфичных полей
+    if "efficiency" in product_data and "model" in product_data:
+        # Это смартфон
+        return Smartphone(
+            name=product_data["name"],
+            description=product_data["description"],
+            price=product_data["price"],
+            quantity=product_data["quantity"],
+            efficiency=product_data["efficiency"],
+            model=product_data["model"],
+            memory=product_data["memory"],
+            color=product_data["color"],
+        )
+    elif "country" in product_data and "germination_period" in product_data:
+        # Это газонная трава
+        return LawnGrass(
+            name=product_data["name"],
+            description=product_data["description"],
+            price=product_data["price"],
+            quantity=product_data["quantity"],
+            country=product_data["country"],
+            germination_period=product_data["germination_period"],
+            color=product_data["color"],
+        )
+    else:
+        # Обычный товар
+        return Product.new_product(product_data)
+
+
 def get_categories_summary(categories: List[Category]) -> dict:
     """
     Возвращает сводную информацию о загруженных категориях.
@@ -71,12 +106,12 @@ def get_categories_summary(categories: List[Category]) -> dict:
         dict: Словарь со статистикой
     """
     total_categories = len(categories)
-    # Используем приватный атрибут для подсчета количества товаров
+    # Используем приватный атрибут для подсчета
     total_products = sum(len(category._Category__products) for category in categories)
 
     return {
         "total_categories": total_categories,
-        "total_products": total_products,  # Количество товаров, а не общая стоимость
+        "total_products": total_products,
         "categories": [
             {"name": category.name, "product_count": len(category._Category__products)}
             for category in categories

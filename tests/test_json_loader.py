@@ -1,15 +1,13 @@
 import json
-import sys
 import os
 
+import pytest
+
 from src.online_store.json_loader import (
-    load_categories_from_json,
     get_categories_summary,
+    load_categories_from_json,
 )
 from src.online_store.models import Category, Product
-
-# Добавляем путь к src
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 
 class TestJsonLoader:
@@ -22,7 +20,7 @@ class TestJsonLoader:
 
     def test_load_categories_from_json_valid_file(self, tmp_path):
         """Тест загрузки категорий из корректного JSON файла."""
-        # ПРАВИЛЬНАЯ СТРУКТУРА: список категорий
+        # Создаем временный JSON файл с правильной структурой (список категорий)
         json_data = [
             {
                 "name": "Тестовая категория",
@@ -181,7 +179,7 @@ class TestJsonLoader:
         summary = get_categories_summary(categories)
 
         assert summary["total_categories"] == 2
-        assert summary["total_products"] == 3  # 2 + 1 = 3 товара
+        assert summary["total_products"] == 3
         assert len(summary["categories"]) == 2
         assert summary["categories"][0]["name"] == "Кат1"
         assert summary["categories"][0]["product_count"] == 2
@@ -189,6 +187,7 @@ class TestJsonLoader:
         assert summary["categories"][1]["product_count"] == 1
 
 
+# Фикстура для JSON файла
 @pytest.fixture
 def sample_json_file(tmp_path):
     """Фикстура для создания тестового JSON файла."""
