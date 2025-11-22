@@ -29,7 +29,7 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         Category.category_count = 0
         Category.product_count = 0
 
-        # data - это уже список категорий, а не объект с ключом 'categories'
+        # data - это уже список категорий (новая структура)
         for category_data in data:
             # Создаем продукты для категории
             products = []
