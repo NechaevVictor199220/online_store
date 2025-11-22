@@ -1,62 +1,57 @@
+from src.online_store.models import Product, Category
 from src.online_store.json_loader import (
-    get_categories_summary,
     load_categories_from_json,
+    get_categories_summary,
 )
-from src.online_store.models import Category, Product
 
 
 def main():
     """Основная функция для демонстрации работы с новой функциональностью."""
 
-    print("=== ДЕМОНСТРАЦИЯ НОВОЙ ФУНКЦИОНАЛЬНОСТИ ===")
+    print("=== ДЕМОНСТРАЦИЯ МАГИЧЕСКИХ МЕТОДОВ ===")
 
     # Сбрасываем счетчики для чистого теста
     Category.category_count = 0
     Category.product_count = 0
 
-    print("\n1. Создание товаров с приватной ценой:")
+    print("\n1. Создание товаров:")
     product1 = Product(
         "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
     )
-    print(f"   Товар создан: {product1.name}")
-    print(f"   Цена через геттер: {product1.price} руб.")
-
-    print("\n2. Попытка установить отрицательную цену:")
-    product1.price = -1000.0  # Должно вывести сообщение об ошибке
-    print(f"   Цена после попытки установить отрицательную: {product1.price} руб.")
-
-    print("\n3. Установка корректной цены:")
-    product1.price = 190000.0
-    print(f"   Новая цена: {product1.price} руб.")
-
-    print("\n4. Создание категории с приватным списком товаров:")
-    category1 = Category("Смартфоны", "Современные смартфоны", [])
-    print(f"   Категория создана: {category1.name}")
-
-    print("\n5. Добавление товаров через add_product():")
-    category1.add_product(product1)
     product2 = Product("iPhone 15", "512GB, Gray space", 210000.0, 8)
-    category1.add_product(product2)
-    print("   Товары добавлены в категорию")
+    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+
+    print(f"   Товар 1: {product1}")  # Используется __str__
+    print(f"   Товар 2: {product2}")
+    print(f"   Товар 3: {product3}")
+
+    print("\n2. Сложение товаров (общая стоимость на складе):")
+    total_value_1_2 = product1 + product2
+    total_value_2_3 = product2 + product3
+    print(f"   {product1.name} + {product2.name} = {total_value_1_2} руб.")
+    print(f"   {product2.name} + {product3.name} = {total_value_2_3} руб.")
+
+    print("\n3. Создание категории:")
+    category1 = Category(
+        "Смартфоны", "Современные смартфоны", [product1, product2, product3]
+    )
+    print(f"   Категория: {category1}")  # Используется __str__ Category
+
+    print("\n4. Итерация по товарам категории:")
+    print("   Товары в категории:")
+    for i, product in enumerate(category1, 1):
+        print(f"   {i}. {product}")
+
+    print("\n5. Добавление нового товара:")
+    product4 = Product("Google Pixel 8", "128GB, Черный", 75000.0, 3)
+    category1.add_product(product4)
+    print(f"   Добавлен: {product4}")
+    print(f"   Обновленная категория: {category1}")
 
     print("\n6. Вывод товаров через геттер:")
     print(category1.products)
 
-    print("\n7. Использование класс-метода new_product():")
-    product_data = {
-        "name": "Xiaomi Redmi Note 11",
-        "description": "1024GB, Синий",
-        "price": 31000.0,
-        "quantity": 14,
-    }
-    product3 = Product.new_product(product_data)
-    category1.add_product(product3)
-    print(f"   Товар создан класс-методом: {product3.name}")
-
-    print("\n8. Итоговый список товаров в категории:")
-    print(category1.products)
-
-    print("\n9. Статистика:")
+    print("\n7. Статистика:")
     print(f"   Всего категорий: {Category.category_count}")
     print(f"   Всего товаров: {Category.product_count}")
 
@@ -70,9 +65,10 @@ def main():
         print(f"Общее количество товаров: {summary['total_products']}")
 
         for category in categories:
-            print(f"\nКатегория: {category.name}")
+            print(f"\nКатегория: {category}")
             print("Товары:")
-            print(category.products)
+            for product in category:
+                print(f"  - {product}")
 
     except FileNotFoundError:
         print("Файл data/products.json не найден.")

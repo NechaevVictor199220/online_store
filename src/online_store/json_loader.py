@@ -34,8 +34,12 @@ def load_categories_from_json(file_path: str) -> List[Category]:
             # Создаем продукты для категории
             products = []
             for product_data in category_data.get("products", []):
-                # Используем класс-метод для создания товара
-                product = Product.new_product(product_data)
+                product = Product(
+                    name=product_data["name"],
+                    description=product_data["description"],
+                    price=product_data["price"],
+                    quantity=product_data["quantity"],
+                )
                 products.append(product)
 
             # Создаем категорию
@@ -67,12 +71,12 @@ def get_categories_summary(categories: List[Category]) -> dict:
         dict: Словарь со статистикой
     """
     total_categories = len(categories)
-    # Используем приватный атрибут для подсчета
+    # Используем приватный атрибут для подсчета количества товаров
     total_products = sum(len(category._Category__products) for category in categories)
 
     return {
         "total_categories": total_categories,
-        "total_products": total_products,
+        "total_products": total_products,  # Количество товаров, а не общая стоимость
         "categories": [
             {"name": category.name, "product_count": len(category._Category__products)}
             for category in categories

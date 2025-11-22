@@ -20,6 +20,33 @@ class Product:
         self._price = price  # Приватный атрибут цены
         self.quantity = quantity
 
+    def __str__(self) -> str:
+        """
+        Строковое представление товара.
+
+        Returns:
+            str: Строка в формате "Название, цена руб. Остаток: количество шт."
+        """
+        return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
+        """
+        Сложение товаров - возвращает общую стоимость всех товаров на складе.
+
+        Args:
+            other: Другой объект Product
+
+        Returns:
+            float: Сумма (цена * количество) для обоих товаров
+
+        Raises:
+            TypeError: Если other не является объектом Product
+        """
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты класса Product")
+
+        return (self._price * self.quantity) + (other._price * other.quantity)
+
     @property
     def price(self) -> float:
         """Геттер для цены товара."""
@@ -62,9 +89,6 @@ class Product:
     def __repr__(self) -> str:
         return f"Product(name='{self.name}', price={self._price}, quantity={self.quantity})"
 
-    def __str__(self) -> str:
-        return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
-
 
 class Category:
     """
@@ -91,6 +115,16 @@ class Category:
         Category.category_count += 1
         Category.product_count += len(products)
 
+    def __str__(self) -> str:
+        """
+        Строковое представление категории.
+
+        Returns:
+            str: Строка в формате "Название категории, количество продуктов: X шт."
+        """
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
     def add_product(self, product: Product) -> None:
         """
         Добавляет товар в приватный список товаров категории.
@@ -111,13 +145,54 @@ class Category:
         """
         products_info = []
         for product in self.__products:
-            products_info.append(
-                f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт."
-            )
+            products_info.append(str(product))  # Используем __str__ Product
         return "\n".join(products_info)
 
     def __repr__(self) -> str:
         return f"Category(name='{self.name}', products_count={len(self.__products)})"
 
-    def __str__(self) -> str:
-        return f"{self.name}, количество продуктов: {len(self.__products)}"
+    def __iter__(self):
+        """
+        Возвращает итератор для перебора товаров категории.
+
+        Returns:
+            CategoryIterator: Итератор товаров категории
+        """
+        return CategoryIterator(self.__products)
+
+
+class CategoryIterator:
+    """
+    Итератор для перебора товаров категории.
+    """
+
+    def __init__(self, products: list):
+        """
+        Инициализация итератора.
+
+        Args:
+            products: Список товаров для итерации
+        """
+        self.products = products
+        self.index = 0
+
+    def __iter__(self):
+        """Возвращает сам итератор."""
+        return self
+
+    def __next__(self) -> Product:
+        """
+        Возвращает следующий товар в итерации.
+
+        Returns:
+            Product: Следующий товар
+
+        Raises:
+            StopIteration: Когда товары закончились
+        """
+        if self.index < len(self.products):
+            product = self.products[self.index]
+            self.index += 1
+            return product
+        else:
+            raise StopIteration
