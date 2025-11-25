@@ -1,117 +1,87 @@
-from src.online_store.json_loader import (
-    get_categories_summary,
-    load_categories_from_json,
-)
 from src.online_store.models import Category, LawnGrass, Product, Smartphone
 
 
 def main():
     """Основная функция для демонстрации работы с новой функциональностью."""
 
-    print("=== ДЕМОНСТРАЦИЯ НАСЛЕДОВАНИЯ И ОГРАНИЧЕНИЙ ===")
+    print("=== ДЕМОНСТРАЦИЯ СЛОЖЕНИЯ ТОВАРОВ И ВАЛИДАЦИИ ===")
 
     # Сбрасываем счетчики для чистого теста
     Category.category_count = 0
     Category.product_count = 0
 
-    print("\n1. Создание разных типов товаров:")
+    print("\n1. Создание товаров для сложения:")
+    product1 = Product("Товар А", "Описание", 100.0, 5)
+    product2 = Product("Товар А", "Описание", 100.0, 3)
 
-    # Обычный товар
-    product = Product("Обычный товар", "Просто товар", 500.0, 10)
-    print(f"   Обычный товар: {product}")
+    print(f"   Товар 1: {product1}")
+    print(f"   Товар 2: {product2}")
 
-    # Смартфон
-    smartphone = Smartphone(
-        name="iPhone 15 Pro",
-        description="Флагманский смартфон",
-        price=150000.0,
-        quantity=5,
-        efficiency=4.8,
-        model="15 Pro Max",
-        memory=512,
-        color="Titanium",
-    )
-    print(f"   Смартфон: {smartphone}")
-
-    # Газонная трава
-    lawn_grass = LawnGrass(
-        name="Газонная трава Премиум",
-        description="Высококачественная газонная трава",
-        price=7500.0,
-        quantity=100,
-        country="Германия",
-        germination_period=12,
-        color="Изумрудный",
-    )
-    print(f"   Газонная трава: {lawn_grass}")
-
-    print("\n2. Проверка наследования:")
-    print(f"   Smartphone является Product: {isinstance(smartphone, Product)}")
-    print(f"   LawnGrass является Product: {isinstance(lawn_grass, Product)}")
-
-    print("\n3. Сложение товаров одного типа:")
+    print("\n2. Сложение товаров одного типа:")
     try:
-        smartphone2 = Smartphone(
-            name="iPhone 15 Pro",
-            description="Флагманский смартфон",
-            price=150000.0,
-            quantity=3,
-            efficiency=4.8,
-            model="15 Pro Max",
-            memory=512,
-            color="Titanium",
-        )
-        total_smartphones = smartphone + smartphone2
-        print(f"   Сложение смартфонов: {total_smartphones.quantity} шт.")
+        result = product1 + product2
+        print(f"   Результат сложения: {result}")
     except TypeError as e:
         print(f"   Ошибка: {e}")
 
-    print("\n4. Попытка сложения разных типов товаров:")
+    print("\n3. Создание смартфонов для сложения:")
+    smartphone1 = Smartphone(
+        name="iPhone",
+        description="Флагманский смартфон",
+        price=150000.0,
+        quantity=2,
+        efficiency=4.5,
+        model="15 Pro",
+        memory=256,
+        color="Black",
+    )
+    smartphone2 = Smartphone(
+        name="iPhone",
+        description="Флагманский смартфон",
+        price=150000.0,
+        quantity=3,
+        efficiency=4.5,
+        model="15 Pro",
+        memory=256,
+        color="Black",
+    )
+
+    print(f"   Смартфон 1: {smartphone1}")
+    print(f"   Смартфон 2: {smartphone2}")
+
+    print("\n4. Сложение смартфонов одного типа:")
     try:
-        invalid_sum = smartphone + lawn_grass
-        print(f"   Результат: {invalid_sum}")
+        smartphone_result = smartphone1 + smartphone2
+        print(f"   Результат сложения: {smartphone_result}")
     except TypeError as e:
-        print(f"   Ошибка (ожидаемо): {e}")
+        print(f"   Ошибка: {e}")
 
-    print("\n5. Добавление товаров в категорию:")
-    electronics_category = Category("Электроника", "Техника и гаджеты", [])
-
-    # Добавляем смартфон
-    electronics_category.add_product(smartphone)
-    print("   Смартфон добавлен в категорию")
-
-    # Попытка добавить не-товар
+    print("\n5. Попытка сложения разных типов товаров:")
     try:
-        electronics_category.add_product("не товар")
-        print("   Не-товар добавлен (не должно быть)")
+        invalid_result = product1 + smartphone1
+        print(f"   Результат: {invalid_result}")
     except TypeError as e:
-        print(f"   Ошибка при добавлении не-товара (ожидаемо): {e}")
+        print(f"   Ожидаемая ошибка: {e}")
 
-    print("\n6. Товары в категории:")
-    print(electronics_category.products)
+    print("\n6. Валидация при добавлении в категорию:")
+    category = Category("Тестовая категория", "Описание", [])
 
-    print("\n7. Статистика:")
+    print("   Добавление корректного товара:")
+    category.add_product(product1)
+    print("   ✓ Товар успешно добавлен")
+
+    print("   Попытка добавления некорректного объекта:")
+    try:
+        category.add_product("не товар")
+    except TypeError as e:
+        print(f"   ✓ Ожидаемая ошибка: {e}")
+
+    print("\n7. Итоговое состояние категории:")
+    print(category.products)
+
+    print("\n8. Статистика:")
     print(f"   Всего категорий: {Category.category_count}")
     print(f"   Всего товаров: {Category.product_count}")
-
-    print("\n=== ДЕМОНСТРАЦИЯ ЗАГРУЗКИ ИЗ JSON ===")
-
-    try:
-        categories = load_categories_from_json("data/products.json")
-        summary = get_categories_summary(categories)
-
-        print(f"Успешно загружено категорий: {summary['total_categories']}")
-        print(f"Общее количество товаров: {summary['total_products']}")
-
-        for category in categories:
-            print(f"\nКатегория: {category.name}")
-            print("Товары:")
-            print(category.products)
-
-    except FileNotFoundError:
-        print("Файл data/products.json не найден.")
-    except Exception as e:
-        print(f"Ошибка при загрузке данных: {e}")
 
 
 if __name__ == "__main__":
