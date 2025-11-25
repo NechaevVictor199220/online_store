@@ -1,6 +1,6 @@
 class Product:
     """
-    Класс для представления товара в магазине.
+    Базовый класс для представления товара в магазине.
     """
 
     def __init__(
@@ -20,33 +20,6 @@ class Product:
         self._price = price  # Приватный атрибут цены
         self.quantity = quantity
 
-    def __str__(self) -> str:
-        """
-        Строковое представление товара.
-
-        Returns:
-            str: Строка в формате "Название, цена руб. Остаток: количество шт."
-        """
-        return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
-
-    def __add__(self, other: "Product") -> float:
-        """
-        Сложение товаров - возвращает общую стоимость всех товаров на складе.
-
-        Args:
-            other: Другой объект Product
-
-        Returns:
-            float: Сумма (цена * количество) для обоих товаров
-
-        Raises:
-            TypeError: Если other не является объектом Product
-        """
-        if not isinstance(other, Product):
-            raise TypeError("Можно складывать только объекты класса Product")
-
-        return (self._price * self.quantity) + (other._price * other.quantity)
-
     @property
     def price(self) -> float:
         """Геттер для цены товара."""
@@ -59,9 +32,6 @@ class Product:
 
         Args:
             new_price: Новая цена товара
-
-        Raises:
-            ValueError: Если цена не положительная
         """
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
@@ -86,8 +56,195 @@ class Product:
             quantity=product_data["quantity"],
         )
 
+    def __add__(self, other):
+        """
+        Сложение товаров одного типа.
+
+        Args:
+            other: Другой товар для сложения
+
+        Returns:
+            Product: Новый товар с суммой количеств
+
+        Raises:
+            TypeError: Если товары разных типов
+        """
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать товары разных типов")
+
+        total_quantity = self.quantity + other.quantity
+
+        # Для базового класса Product
+        if isinstance(self, Product) and not isinstance(self, (Smartphone, LawnGrass)):
+            return Product(
+                name=self.name,
+                description=self.description,
+                price=self.price,
+                quantity=total_quantity,
+            )
+
+        # Для классов-наследников нужно переопределить этот метод
+        raise NotImplementedError(
+            f"Метод __add__ не реализован для класса {type(self).__name__}"
+        )
+
     def __repr__(self) -> str:
         return f"Product(name='{self.name}', price={self._price}, quantity={self.quantity})"
+
+    def __str__(self) -> str:
+        return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
+
+
+class Smartphone(Product):
+    """
+    Класс для представления смартфона.
+    Наследуется от класса Product.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ) -> None:
+        """
+        Инициализация объекта Smartphone.
+
+        Args:
+            name: Название смартфона
+            description: Описание смартфона
+            price: Цена смартфона
+            quantity: Количество в наличии
+            efficiency: Производительность
+            model: Модель смартфона
+            memory: Объем встроенной памяти (ГБ)
+            color: Цвет смартфона
+        """
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+    def __add__(self, other):
+        """
+        Сложение смартфонов одного типа.
+
+        Args:
+            other: Другой смартфон для сложения
+
+        Returns:
+            Smartphone: Новый смартфон с суммой количеств
+
+        Raises:
+            TypeError: Если смартфоны разных типов
+        """
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать товары разных типов")
+
+        total_quantity = self.quantity + other.quantity
+
+        return Smartphone(
+            name=self.name,
+            description=self.description,
+            price=self.price,
+            quantity=total_quantity,
+            efficiency=self.efficiency,
+            model=self.model,
+            memory=self.memory,
+            color=self.color,
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"Smartphone(name='{self.name}', model='{self.model}', "
+            f"price={self._price}, quantity={self.quantity})"
+        )
+
+    def __str__(self) -> str:
+        return (
+            f"{self.name} ({self.model}), {self._price} руб. "
+            f"Остаток: {self.quantity} шт. Память: {self.memory}ГБ"
+        )
+
+
+class LawnGrass(Product):
+    """
+    Класс для представления газонной травы.
+    Наследуется от класса Product.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: int,
+        color: str,
+    ) -> None:
+        """
+        Инициализация объекта LawnGrass.
+
+        Args:
+            name: Название травы
+            description: Описание травы
+            price: Цена травы
+            quantity: Количество в наличии
+            country: Страна-производитель
+            germination_period: Срок прорастания (дни)
+            color: Цвет травы
+        """
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+    def __add__(self, other):
+        """
+        Сложение газонной травы одного типа.
+
+        Args:
+            other: Другая газонная трава для сложения
+
+        Returns:
+            LawnGrass: Новая газонная трава с суммой количеств
+
+        Raises:
+            TypeError: Если газонная трава разных типов
+        """
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать товары разных типов")
+
+        total_quantity = self.quantity + other.quantity
+
+        return LawnGrass(
+            name=self.name,
+            description=self.description,
+            price=self.price,
+            quantity=total_quantity,
+            country=self.country,
+            germination_period=self.germination_period,
+            color=self.color,
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"LawnGrass(name='{self.name}', country='{self.country}', "
+            f"price={self._price}, quantity={self.quantity})"
+        )
+
+    def __str__(self) -> str:
+        return (
+            f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт. "
+            f"Страна: {self.country}"
+        )
 
 
 class Category:
@@ -115,23 +272,22 @@ class Category:
         Category.category_count += 1
         Category.product_count += len(products)
 
-    def __str__(self) -> str:
-        """
-        Строковое представление категории.
-
-        Returns:
-            str: Строка в формате "Название категории, количество продуктов: X шт."
-        """
-        total_quantity = sum(product.quantity for product in self.__products)
-        return f"{self.name}, количество продуктов: {total_quantity} шт."
-
-    def add_product(self, product: Product) -> None:
+    def add_product(self, product) -> None:
         """
         Добавляет товар в приватный список товаров категории.
 
         Args:
             product: Объект товара для добавления
+
+        Raises:
+            TypeError: Если переданный объект не является товаром
         """
+        # Проверяем, что объект является товаром или наследником Product
+        if not isinstance(product, Product):
+            raise TypeError(
+                "Можно добавлять только объекты класса Product или его наследников"
+            )
+
         self.__products.append(product)
         Category.product_count += 1  # Увеличиваем счетчик товаров
 
@@ -145,54 +301,11 @@ class Category:
         """
         products_info = []
         for product in self.__products:
-            products_info.append(str(product))  # Используем __str__ Product
+            products_info.append(str(product))
         return "\n".join(products_info)
 
     def __repr__(self) -> str:
         return f"Category(name='{self.name}', products_count={len(self.__products)})"
 
-    def __iter__(self):
-        """
-        Возвращает итератор для перебора товаров категории.
-
-        Returns:
-            CategoryIterator: Итератор товаров категории
-        """
-        return CategoryIterator(self.__products)
-
-
-class CategoryIterator:
-    """
-    Итератор для перебора товаров категории.
-    """
-
-    def __init__(self, products: list):
-        """
-        Инициализация итератора.
-
-        Args:
-            products: Список товаров для итерации
-        """
-        self.products = products
-        self.index = 0
-
-    def __iter__(self):
-        """Возвращает сам итератор."""
-        return self
-
-    def __next__(self) -> Product:
-        """
-        Возвращает следующий товар в итерации.
-
-        Returns:
-            Product: Следующий товар
-
-        Raises:
-            StopIteration: Когда товары закончились
-        """
-        if self.index < len(self.products):
-            product = self.products[self.index]
-            self.index += 1
-            return product
-        else:
-            raise StopIteration
+    def __str__(self) -> str:
+        return f"{self.name}, количество продуктов: {len(self.__products)}"
