@@ -1,4 +1,41 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class LoggingMixin:
+    """Миксин для логирования создания объектов."""
+
+    def __init__(self, *args, **kwargs):
+        """Инициализация с логированием параметров создания."""
+        super().__init__(*args, **kwargs)
+        class_name = self.__class__.__name__
+        print(f"Создан объект {class_name}{args}")
+
+
+class BaseProduct(ABC):
+    """Абстрактный базовый класс для всех продуктов."""
+
+    @abstractmethod
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        """Абстрактный метод инициализации продукта."""
+        pass
+
+    @abstractmethod
+    def __str__(self) -> str:
+        """Абстрактный метод строкового представления."""
+        pass
+
+    @abstractmethod
+    def __repr__(self) -> str:
+        """Абстрактный метод представления для разработчиков."""
+        pass
+
+    @abstractmethod
+    def __add__(self, other):
+        """Абстрактный метод сложения товаров."""
+        pass
+
+
+class Product(LoggingMixin, BaseProduct):
     """
     Базовый класс для представления товара в магазине.
     """
@@ -15,6 +52,7 @@ class Product:
             price: Цена товара
             quantity: Количество товара в наличии
         """
+        super().__init__(name, description, price, quantity)
         self.name = name
         self.description = description
         self._price = price  # Приватный атрибут цены
