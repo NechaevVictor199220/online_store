@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from .models import Category, Product
+from .models import Category, Product, ZeroQuantityError
 
 
 def load_categories_from_json(file_path: str) -> List[Category]:
@@ -18,6 +18,7 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         FileNotFoundError: Если файл не найден
         json.JSONDecodeError: Если файл содержит некорректный JSON
         KeyError: Если в JSON отсутствуют обязательные поля
+        ZeroQuantityError: Если товар имеет нулевое количество
     """
     try:
         with open(file_path, "r", encoding="utf-8") as file:
@@ -35,6 +36,7 @@ def load_categories_from_json(file_path: str) -> List[Category]:
             products = []
             for product_data in category_data.get("products", []):
                 # Используем класс-метод для создания товара
+                # Теперь может вызвать ZeroQuantityError
                 product = Product.new_product(product_data)
                 products.append(product)
 
@@ -54,6 +56,8 @@ def load_categories_from_json(file_path: str) -> List[Category]:
         raise json.JSONDecodeError(f"Ошибка декодирования JSON: {e}", e.doc, e.pos)
     except KeyError as e:
         raise KeyError(f"Отсутствует обязательное поле в JSON: {e}")
+    except ZeroQuantityError as e:
+        raise ZeroQuantityError(f"Ошибка при загрузке товара: {e}")
 
 
 def get_categories_summary(categories: List[Category]) -> dict:
@@ -70,11 +74,21 @@ def get_categories_summary(categories: List[Category]) -> dict:
     # Используем приватный атрибут для подсчета
     total_products = sum(len(category._Category__products) for category in categories)
 
+    # Добавляем средние цены
+    average_prices = {}
+    for category in categories:
+        average_prices[category.name] = category.average_price()
+
     return {
         "total_categories": total_categories,
         "total_products": total_products,
+        "average_prices": average_prices,
         "categories": [
-            {"name": category.name, "product_count": len(category._Category__products)}
+            {
+                "name": category.name,
+                "product_count": len(category._Category__products),
+                "average_price": category.average_price(),
+            }
             for category in categories
         ],
     }

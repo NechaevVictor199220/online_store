@@ -1,6 +1,12 @@
 from abc import ABC, abstractmethod
 
 
+class ZeroQuantityError(ValueError):
+    """Пользовательское исключение для товаров с нулевым количеством."""
+
+    pass
+
+
 class LoggingMixin:
     """Миксин для логирования создания объектов."""
 
@@ -51,7 +57,16 @@ class Product(LoggingMixin, BaseProduct):
             description: Описание товара
             price: Цена товара
             quantity: Количество товара в наличии
+
+        Raises:
+            ZeroQuantityError: Если количество товара равно нулю
         """
+        # Проверяем, что количество не равно нулю
+        if quantity == 0:
+            raise ZeroQuantityError(
+                "Товар с нулевым количеством не может быть добавлен"
+            )
+
         super().__init__(name, description, price, quantity)
         self.name = name
         self.description = description
@@ -86,6 +101,9 @@ class Product(LoggingMixin, BaseProduct):
 
         Returns:
             Product: Созданный объект товара
+
+        Raises:
+            ZeroQuantityError: Если количество товара равно нулю
         """
         return cls(
             name=product_data["name"],
@@ -162,6 +180,9 @@ class Smartphone(Product):
             model: Модель смартфона
             memory: Объем встроенной памяти (ГБ)
             color: Цвет смартфона
+
+        Raises:
+            ZeroQuantityError: Если количество товара равно нулю
         """
         super().__init__(name, description, price, quantity)
         self.efficiency = efficiency
@@ -238,6 +259,9 @@ class LawnGrass(Product):
             country: Страна-производитель
             germination_period: Срок прорастания (дни)
             color: Цвет травы
+
+        Raises:
+            ZeroQuantityError: Если количество товара равно нулю
         """
         super().__init__(name, description, price, quantity)
         self.country = country
@@ -319,11 +343,18 @@ class Category:
 
         Raises:
             TypeError: Если переданный объект не является товаром
+            ZeroQuantityError: Если количество товара равно нулю
         """
         # Проверяем, что объект является товаром или наследником Product
         if not isinstance(product, Product):
             raise TypeError(
                 "Можно добавлять только объекты класса Product или его наследников"
+            )
+
+        # Проверяем, что количество товара не равно нулю
+        if product.quantity == 0:
+            raise ZeroQuantityError(
+                "Товар с нулевым количеством не может быть добавлен"
             )
 
         self.__products.append(product)
@@ -341,6 +372,19 @@ class Category:
         for product in self.__products:
             products_info.append(str(product))
         return "\n".join(products_info)
+
+    def average_price(self) -> float:
+        """
+        Рассчитывает среднюю цену товаров в категории.
+
+        Returns:
+            float: Средняя цена товаров или 0, если в категории нет товаров
+        """
+        try:
+            total_price = sum(product.price for product in self.__products)
+            return total_price / len(self.__products)
+        except ZeroDivisionError:
+            return 0.0
 
     def __repr__(self) -> str:
         return f"Category(name='{self.name}', products_count={len(self.__products)})"
